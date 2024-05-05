@@ -7,10 +7,10 @@ namespace SystemInfo.Services
     public interface IFarmerService
     {
         Task<List<Farmer>> GetAll();
-        Task<Farmer> GetFarmer(int? id);
+        Task<Farmer> GetFarmer(int id);
         Task<Farmer> Create(string name, string lastname, int contactType, string contact, string address);
         Task<Farmer> Update(int id, string name, string lastname, int contactType, string contact, string address);
-        Task<Farmer> DeleteFarmer(int? id);
+        Task<Farmer> DeleteFarmer(int id);
     }
     public class FarmerService : IFarmerService
     {
@@ -27,10 +27,9 @@ namespace SystemInfo.Services
             return await _farmerRepository.Create(name, lastname, contactType, contact, address);   
         }
 
-        public async Task<Farmer> DeleteFarmer(int? id)
+        public async Task<Farmer> DeleteFarmer(int id)
         {
-            Farmer newFarmer = await GetFarmer(id);
-            return await _farmerRepository.DeleteFarmer(newFarmer);
+            return await _farmerRepository.DeleteFarmer(id);
         }
 
         public async Task<List<Farmer>> GetAll()
@@ -38,7 +37,7 @@ namespace SystemInfo.Services
             return await _farmerRepository.GetAll();
         }
 
-        public async Task<Farmer> GetFarmer(int? id)
+        public async Task<Farmer> GetFarmer(int id)
         {
             return await _farmerRepository.GetFarmer(id);
         }

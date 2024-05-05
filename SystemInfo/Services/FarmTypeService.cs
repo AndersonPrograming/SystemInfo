@@ -7,10 +7,10 @@ namespace SystemInfo.Services
     public interface IFarmTypeService
     {
         Task<List<FarmType>> GetAll();
-        Task<FarmType> GetFarmType(int? id);
+        Task<FarmType> GetFarmType(int id);
         Task<FarmType> Create(string FarmType);
         Task<FarmType> Update(int id, string FarmType);
-        Task<FarmType> DeleteFarmType(int? id);
+        Task<FarmType> DeleteFarmType(int id);
     }
     public class FarmTypeService: IFarmTypeService
     {
@@ -26,7 +26,7 @@ namespace SystemInfo.Services
             return await _farmTypeRepository.Create(FarmType);
         }
 
-        public async Task<FarmType> DeleteFarmType(int? id)
+        public async Task<FarmType> DeleteFarmType(int id)
         {
 
             return await _farmTypeRepository.DeleteFarmType(id);
@@ -37,7 +37,7 @@ namespace SystemInfo.Services
             return await _farmTypeRepository.GetAll();
         }
 
-        public async Task<FarmType> GetFarmType(int? id)
+        public async Task<FarmType> GetFarmType(int id)
         {
             return await _farmTypeRepository.GetFarmType(id);
         }

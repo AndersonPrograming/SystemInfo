@@ -8,10 +8,10 @@ namespace SystemInfo.Services
     public interface IFarmService
     {
         Task<List<Farm>> GetAll();
-        Task<Farm> GetFarm(int? id);
+        Task<Farm> GetFarm(int id);
         Task<Farm> Create(string farmName, string location, string farmArea, string image, int farmerId, int farmTypeId);
         Task<Farm> Update(int id, string farmName, string location, string farmArea, string image, int farmerId, int farmTypeId);
-        Task<Farm> DeleteFarm(int? id);
+        Task<Farm> DeleteFarm(int id);
     }
     public class FarmService: IFarmService
     {
@@ -27,7 +27,7 @@ namespace SystemInfo.Services
             return await _farmRepository.Create( farmName, location, farmArea, image, farmerId, farmTypeId);
         }
 
-        public async Task<Farm> DeleteFarm(int? id)
+        public async Task<Farm> DeleteFarm(int id)
         {
             Farm newFarm = await GetFarm(id);
             return await _farmRepository.DeleteFarm(id);
@@ -38,7 +38,7 @@ namespace SystemInfo.Services
             return await _farmRepository.GetAll();
         }
 
-        public async Task<Farm> GetFarm(int? id)
+        public async Task<Farm> GetFarm(int id)
         {
             return await _farmRepository.GetFarm(id);
         }
