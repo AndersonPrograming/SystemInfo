@@ -9,10 +9,10 @@ namespace SystemInfo.Repositories
     public interface IFarmRepository
     {
         Task<List<Farm>> GetAll();
-        Task<Farm> GetFarm(int? id);
-        Task<Farm> Create(Farm farm);
-        Task<Farm> Update(Farm farm);
-        Task<Farm> DeleteFarm(Farm farm);
+        Task<Farm> GetFarm(int id);
+        Task<Farm> Create(string farmName, string location, string farmArea, string image, int farmerId, int farmTypeId);
+        Task<Farm> Update(int id, string farmName, string location, string farmArea, string image, int farmerId, int farmTypeId);
+        Task<Farm> DeleteFarm(int id);
     }
     public class FarmRepository : IFarmRepository
     {
@@ -24,16 +24,31 @@ namespace SystemInfo.Repositories
         {
             _db = db;
         }
-        public async Task<Farm> Create(Farm farm)
+        public async Task<Farm> Create(string farmName, string location, string farmArea, string image, int farmerId, int farmTypeId)
         {
-            await _db.Farms.AddAsync(farm);
+            Farm resultFarm = new Farm
+            {
+                FarmName = farmName,
+                Location = location,
+                FarmArea = farmArea,
+                Image = image,
+                FarmerId = farmerId,
+                FarmTypeId = farmTypeId
+
+            };
+            await _db.Farms.AddAsync(resultFarm);
             _db.SaveChanges();
-            return farm;
+            return resultFarm;
         }
 
-        public Task<Farm> DeleteFarm(Farm farm)
+        public async Task<Farm> DeleteFarm(int id)
         {
-            throw new NotImplementedException();
+            Farm farm = await GetFarm(id);
+            if (farm != null)
+            {
+                farm.isDeleted = true;
+            }
+            return farm;
         }
 
         public async Task<List<Farm>> GetAll()
@@ -41,16 +56,28 @@ namespace SystemInfo.Repositories
             return await _db.Farms.ToListAsync();
         }
 
-        public async Task<Farm> GetFarm(int? id)
+        public async Task<Farm> GetFarm(int id)
         {
             return await _db.Farms.FirstOrDefaultAsync(u => u.FarmId == id);
         }
 
-        public async Task<Farm> Update(Farm farm)
+        public async Task<Farm> Update(int id, string farmName, string location, string farmArea, string image, int farmerId, int farmTypeId)
         {
-           _db.Farms.Update(farm);
-            await _db.SaveChangesAsync();
-            return farm;
+            Farm resultFarm = await GetFarm(id);
+            if(resultFarm != null)
+            {
+                resultFarm.FarmName = farmName;
+                resultFarm.Location = location;
+                resultFarm.FarmArea = farmArea;
+                resultFarm.Image = image;
+                resultFarm.FarmerId = farmerId;
+                resultFarm.FarmTypeId = farmTypeId;
+
+                await _db.SaveChangesAsync();
+
+            }
+            
+            return resultFarm;
         }
     }
 }

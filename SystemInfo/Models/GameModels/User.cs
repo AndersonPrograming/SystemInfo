@@ -6,7 +6,9 @@
         public required string Email { get; set; }
         public required string Username { get; set; }
         public required string Password { get; set; }
+        public required string Image { get; set; }
+        public bool isDeleted { get; set; } = false;
 
-        public required Game Game { get; set; }
+        public List<Game>? Games { get; set; }
     }
 }

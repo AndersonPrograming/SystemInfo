@@ -10,88 +10,62 @@ namespace SystemInfo.Controllers
     [ApiController]
     public class ContactTypeController : ControllerBase
     {
-        private readonly ContactTypeService _service;
+        private readonly IContactTypeService _contactTypeService;
 
-        public ContactTypeController(ContactTypeService service)
+        public ContactTypeController(IContactTypeService contactTypeService)
         {
-            _service = service;
+            _contactTypeService = contactTypeService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ContactType>>> GetAll()
+        public async Task<ActionResult<List<ContactType>>> GetAll()
         {
-            var result = await _service.GetAll();
-            if (!result.Any())
-            {
-                return NotFound(new { message = "Farmer not found" });
-            }
-
-            return result.ToList();
+            return Ok(await _contactTypeService.GetAll());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ContactType>> GetContactType(int id)
         {
-            try
+            var contactType = await _contactTypeService.GetContactType(id);
+            if (contactType == null)
             {
-                var contactType = await _service.GetContactType(id);
-                return contactType;
+                return BadRequest("ContactType not found");
             }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "Farmer not found" });
-            }
+
+            return Ok(contactType);
         }
         [HttpPost]
-        public async Task<ActionResult<ContactType>> Create(ContactType contactType)
+        public async Task<ActionResult<ContactType>> create(string contactType)
         {
-            try
+            var createContactType = await _contactTypeService.Create(contactType);
+            if (createContactType == null)
             {
-                var createContactType = await _service.Create(contactType);
-                return CreatedAtAction("GetContactType", new { id = createContactType.ContactTypeId }, createContactType);
+                return BadRequest("ContactType not Created");
             }
-            catch (ArgumentNullException)
-            {
-                return BadRequest(new { message = "ContatType cannot be null." });
-            }
+            return Ok(createContactType);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, ContactType contactType)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Update(int id, string contactType)
         {
-            if (id != contactType.ContactTypeId)
+            var createContactType = await _contactTypeService.Update(id, contactType);
+            if (createContactType == null)
             {
-                return BadRequest();
+                return BadRequest("ContactType not Updated");
             }
-
-            try
-            {
-                await _service.Update(contactType);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "ContactType not found" });
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
-            }
-
-            return NoContent();
+            return Ok(contactType);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFarmer(int id)
+        public async Task<IActionResult> DeleteContactType(int id)
         {
-            try
+            var contactType = await _contactTypeService.DeleteContactType(id);
+            if (contactType == null)
             {
-                await _service.DeleteContactType(id);
-                return NoContent();
+                return BadRequest("ContactType not Deleted");
             }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "ContactType not found" });
-            }
+            return Ok(contactType);
+
         }
     }
 }

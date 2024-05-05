@@ -3,9 +3,11 @@
     public class Score
     {
         public int ScoreId { get; set; }
-        public required string Time { get; set; }
+        public required int GameId { get; set; }
+        public required string ScoreValue { get; set; }
+        public bool isDeleted { get; set; } = false;
 
-        public required List<Game> Games { get; set; }
+        public Game? Game { get; set; }
 
     }
 }

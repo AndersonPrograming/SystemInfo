@@ -10,88 +10,62 @@ namespace SystemInfo.Controllers
     [ApiController]
     public class EnergyMeterController : ControllerBase
     {
-        private readonly EnergyMeterService _service;
+        private readonly IEnergyMeterService _energyMeterService;
 
-        public EnergyMeterController(EnergyMeterService service)
+        public EnergyMeterController(IEnergyMeterService energyMeterService)
         {
-            _service = service;
+            _energyMeterService = energyMeterService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EnergyMeter>>> GetAll()
+        public async Task<ActionResult<List<EnergyMeter>>> GetAll()
         {
-            var result = await _service.GetAll();
-            if (!result.Any())
-            {
-                return NotFound(new { message = "EnergyMeter not found" });
-            }
-
-            return result.ToList();
+            return Ok(await _energyMeterService.GetAll());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<EnergyMeter>> GetEnergyMeter(int id)
         {
-            try
+            var energyMeter = await _energyMeterService.GetEnergyMeter(id);
+            if (energyMeter == null)
             {
-                var energyMeter = await _service.GetEnergyMeter(id);
-                return energyMeter;
+                return BadRequest("FarmType not found");
             }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "EnergyMeter not found" });
-            }
+
+            return Ok(energyMeter);
         }
         [HttpPost]
-        public async Task<ActionResult<EnergyMeter>> create(EnergyMeter energyMeter)
+        public async Task<ActionResult<EnergyMeter>> create(string energyMeterBrand, DateTime instalationDate)
         {
-            try
+            var createEnergyMeter = await _energyMeterService.Create(energyMeterBrand, instalationDate);
+            if (createEnergyMeter == null)
             {
-                var createEnergyMeter = await _service.Create(energyMeter);
-                return CreatedAtAction("GetEnergyMeter", new { id = createEnergyMeter.EnergyMeterId }, createEnergyMeter);
+                return BadRequest("FarmType not Created");
             }
-            catch (ArgumentNullException)
-            {
-                return BadRequest(new { message = "EnergyMeter cannot be null" });
-            }
+            return Ok(createEnergyMeter);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, EnergyMeter energyMeter)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Update(int id, string energyMeter, DateTime instalationDate)
         {
-            if (id != energyMeter.EnergyMeterId)
+            var createEnergyMeter = await _energyMeterService.Update(id, energyMeter, instalationDate);
+            if (createEnergyMeter == null)
             {
-                return BadRequest();
+                return BadRequest("EnergyMeter not Updated");
             }
-
-            try
-            {
-                await _service.Update(energyMeter);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "EnergyMeter not found" });
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
-            }
-
-            return NoContent();
+            return Ok(energyMeter);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEnergyMeter(int id)
         {
-            try
+            var energyMeter = await _energyMeterService.DeleteEnergyMeter(id);
+            if (energyMeter == null)
             {
-                await _service.DeleteEnergyMeter(id);
-                return NoContent();
+                return BadRequest("EnergyMeter not Deleted");
             }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "EnergyMeter not found" });
-            }
+            return Ok(energyMeter);
+
         }
     }
 }

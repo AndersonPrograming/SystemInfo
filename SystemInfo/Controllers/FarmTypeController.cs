@@ -10,9 +10,9 @@ namespace SystemInfo.Controllers
     [ApiController]
     public class FarmTypeController : ControllerBase
     {
-        private readonly FarmTypeService _farmTypeService;
+        private readonly IFarmTypeService _farmTypeService;
 
-        public FarmTypeController(FarmTypeService farmTypeService)
+        public FarmTypeController(IFarmTypeService farmTypeService)
         {
             _farmTypeService = farmTypeService;
         }
@@ -35,7 +35,7 @@ namespace SystemInfo.Controllers
             return Ok(farmType);
         }
         [HttpPost]
-        public async Task<ActionResult<FarmType>> create(FarmType farmType)
+        public async Task<ActionResult<FarmType>> create(string farmType)
         {
             var createFarmType = await _farmTypeService.Create(farmType);
             if(createFarmType == null)
@@ -45,10 +45,10 @@ namespace SystemInfo.Controllers
             return Ok(createFarmType);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, FarmType farmType)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Update(int id, string farmType)
         {
-           var farm = await _farmTypeService.Update(farmType);
+           var farm = await _farmTypeService.Update(id, farmType);
             if(farm == null)
             {
                 return BadRequest("FarmType not Updated");

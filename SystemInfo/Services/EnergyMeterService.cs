@@ -4,38 +4,31 @@ using SystemInfo.Repositories;
 namespace SystemInfo.Services
 {
     // create interface
-    public interface IEnergyMeterServiceRepository
+    public interface IEnergyMeterService
     {
         Task<List<EnergyMeter>> GetAll();
-        Task<EnergyMeter> GetEnergyMeter(int id);
-        Task<EnergyMeter> Create(EnergyMeter energyMeter);
-        Task<EnergyMeter> Update(EnergyMeter energyMeter);
+        Task<EnergyMeter> GetEnergyMeter(int? id);
+        Task<EnergyMeter> Create(string energyMeterBrand, DateTime instalationDate);
+        Task<EnergyMeter> Update(int id, string energyMeterBrand, DateTime instalationDate);
         Task<EnergyMeter> DeleteEnergyMeter(int id);
     }
-    public class EnergyMeterService: IEnergyMeterServiceRepository
+    public class EnergyMeterService: IEnergyMeterService
     {
-        public readonly EnergyMeterRepository _energyMeterRepository;
+        public readonly IEnergyMeterRepository _energyMeterRepository;
 
-        public EnergyMeterService(EnergyMeterRepository energyMeterRepository)
+        public EnergyMeterService(IEnergyMeterRepository energyMeterRepository)
         {
             _energyMeterRepository = energyMeterRepository;
         }
 
-        public async Task<EnergyMeter> Create(EnergyMeter energyMeter)
+        public async Task<EnergyMeter> Create(string energyMeterBrand, DateTime instalationDate)
         {
-            EnergyMeter newEnergyMeter = new EnergyMeter
-            {
-                EnergyMeterBrand = energyMeter.EnergyMeterBrand,
-                InstalationDate = energyMeter.InstalationDate,
-
-            };
-            return await _energyMeterRepository.Create(newEnergyMeter);
+            return await _energyMeterRepository.Create(energyMeterBrand, instalationDate);
         }
 
         public async Task<EnergyMeter> DeleteEnergyMeter(int id)
         {
-            EnergyMeter newEnergyMeter = await GetEnergyMeter(id);
-            return await _energyMeterRepository.DeleteEnergyMeter(newEnergyMeter);
+            return await _energyMeterRepository.DeleteEnergyMeter(id);
         }
 
         public async Task<List<EnergyMeter>> GetAll()
@@ -43,28 +36,15 @@ namespace SystemInfo.Services
             return await _energyMeterRepository.GetAll();
         }
 
-        public async Task<EnergyMeter> GetEnergyMeter(int id)
+        public async Task<EnergyMeter> GetEnergyMeter(int? id)
         {
             return await _energyMeterRepository.GetEnergyMeter(id);
         }
 
-        public async Task<EnergyMeter> Update(EnergyMeter energyMeter)
+        public async Task<EnergyMeter> Update(int id, string energyMeterBrand, DateTime instalationDate)
         {
-            EnergyMeter newEnergyMeter = await GetEnergyMeter(energyMeter.EnergyMeterId);
-            if (newEnergyMeter != null)
-            {
-                if (energyMeter.EnergyMeterBrand != null)
-                {
-                    newEnergyMeter.EnergyMeterBrand = energyMeter.EnergyMeterBrand;
-                }
-                if (energyMeter.InstalationDate != null)
-                {
-                    newEnergyMeter.InstalationDate = (DateTime)energyMeter.InstalationDate;
-                }
 
-
-                return await _energyMeterRepository.Update(newEnergyMeter);
-            }
+            return await _energyMeterRepository.Update(id, energyMeterBrand, instalationDate);
             throw new NotImplementedException();
           
         }

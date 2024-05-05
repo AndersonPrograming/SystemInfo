@@ -9,9 +9,9 @@ namespace SystemInfo.Repositories
     {
         Task<List<Device>> GetAll();
         Task<Device> GetDevice(int? id);
-        Task<Device> Create(Device device);
-        Task<Device> Update(Device device);
-        Task<Device> DeleteDevice(Device device);
+        Task<Device> Create(string DeviceBrand, string GenerationCapacity, int FarmId, int EnergyMeterId, int DeviceTypeId);
+        Task<Device> Update(int id, string DeviceBrand, string GenerationCapacity, int FarmId, int EnergyMeterId, int DeviceTypeId);
+        Task<Device> DeleteDevice(int id);
     }
     public class DeviceRepository: IDeviceRepository
     {
@@ -24,16 +24,29 @@ namespace SystemInfo.Repositories
             _db = db;
         }
 
-        public async Task<Device> Create(Device device)
+        public async Task<Device> Create(string DeviceBrand, string GenerationCapacity, int FarmId, int EnergyMeterId, int DeviceTypeId)
         {
+            Device device = new Device
+            {
+                DeviceBrand = DeviceBrand,
+                GenerationCapacity = GenerationCapacity,
+                FarmId = FarmId,
+                EnergyMeterId = EnergyMeterId,
+                DeviceTypeId = DeviceTypeId
+            };
             await _db.Devices.AddAsync(device);
             _db.SaveChanges();
             return device;
         }
 
-        public Task<Device> DeleteDevice(Device device)
+        public async Task<Device> DeleteDevice(int id)
         {
-            throw new NotImplementedException();
+            Device device = await GetDevice(id);
+            if (device != null)
+            {
+                device.isDeleted = true;
+            }
+            return device;
         }
 
         public async Task<List<Device>> GetAll()
@@ -46,11 +59,20 @@ namespace SystemInfo.Repositories
             return await _db.Devices.FirstOrDefaultAsync(u => u.DeviceId == id);
         }
 
-        public async Task<Device> Update(Device device)
+        public async Task<Device> Update(int id, string DeviceBrand, string GenerationCapacity, int FarmId, int EnergyMeterId, int DeviceTypeId)
         {
-            _db.Devices.Update(device);
-            await _db.SaveChangesAsync();
-            return device;
+            Device resultDevice = await GetDevice(id);
+            if(resultDevice != null)
+            {
+                resultDevice.DeviceBrand = DeviceBrand;
+                resultDevice.GenerationCapacity = GenerationCapacity;
+                resultDevice.FarmId = FarmId;
+                resultDevice.EnergyMeterId = EnergyMeterId;
+                resultDevice.DeviceTypeId = DeviceTypeId;
+
+                await _db.SaveChangesAsync();
+            }
+            return resultDevice;
                     
         }
 

@@ -8,30 +8,23 @@ namespace SystemInfo.Services
     {
         Task<List<Farmer>> GetAll();
         Task<Farmer> GetFarmer(int? id);
-        Task<Farmer> Create(Farmer farmer);
-        Task<Farmer> Update(Farmer farmer);
+        Task<Farmer> Create(string name, string lastname, int contactType, string contact, string address);
+        Task<Farmer> Update(int id, string name, string lastname, int contactType, string contact, string address);
         Task<Farmer> DeleteFarmer(int? id);
     }
     public class FarmerService : IFarmerService
     {
-        public readonly FarmerRepository _farmerRepository;
+        public readonly IFarmerRepository _farmerRepository;
 
-        public FarmerService(FarmerRepository farmerRepository)
+        public FarmerService(IFarmerRepository farmerRepository)
         {
             _farmerRepository = farmerRepository;
         }
 
-        public async Task<Farmer> Create(Farmer farmer)
+        public async Task<Farmer> Create(string name, string lastname, int contactType, string contact, string address)
         {
-            Farmer newFarmer = new Farmer
-            {
-                Name = farmer.Name,
-                LastName = farmer.LastName,
-                ContactType = farmer.ContactType,
-                Contact = farmer.Contact,
-                Address = farmer.Address,
-            };
-            return await _farmerRepository.Create(newFarmer);   
+           
+            return await _farmerRepository.Create(name, lastname, contactType, contact, address);   
         }
 
         public async Task<Farmer> DeleteFarmer(int? id)
@@ -50,34 +43,10 @@ namespace SystemInfo.Services
             return await _farmerRepository.GetFarmer(id);
         }
 
-        public async Task<Farmer> Update(Farmer farmer)
+        public async Task<Farmer> Update(int id, string name, string lastname, int contactType, string contact, string address)
         {
-            Farmer newFarmer = await GetFarmer(farmer.FarmerId);
-            if (newFarmer != null)
-            {
-                if (farmer.Name != null)
-                {
-                    newFarmer.Name = farmer.Name;
-                }
-                if (farmer.LastName != null)
-                {
-                    newFarmer.LastName = farmer.LastName;
-                }
-                if (farmer.ContactType != null)
-                {
-                    newFarmer.ContactType = farmer.ContactType;
-                }
-                if (farmer.Contact != null)
-                {
-                    newFarmer.Contact = farmer.Contact;
-                }
-                if (farmer.Address != null)
-                {
-                    newFarmer.Address = farmer.Address;
-                }
-
-                return await _farmerRepository.Update(newFarmer);
-            }
+          
+            return await _farmerRepository.Update(id, name, lastname, contactType, contact, address);
             throw new NotImplementedException();
         }
     }

@@ -10,88 +10,62 @@ namespace SystemInfo.Controllers
     [ApiController]
     public class DeviceController : ControllerBase
     {
-        private readonly DeviceService _service;
+        private readonly IDeviceService _deviceService;
 
-        public DeviceController(DeviceService service)
+        public DeviceController(IDeviceService deviceService)
         {
-            _service = service;
+            _deviceService = deviceService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Device>>> GetAll()
+        public async Task<ActionResult<List<Device>>> GetAll()
         {
-            var result = await _service.GetAll();
-            if (!result.Any())
-            {
-                return NotFound(new { message = "Devices not found" });
-            }
-
-            return result.ToList();
+            return Ok(await _deviceService.GetAll());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Device>> GetDevice(int id)
         {
-            try
+            var device = await _deviceService.GetDevice(id);
+            if (device == null)
             {
-                var device = await _service.GetDevice(id);
-                return device;
+                return BadRequest("Device not found");
             }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "Device not found" });
-            }
+
+            return Ok(device);
         }
         [HttpPost]
-        public async Task<ActionResult<Device>> create(Device device)
+        public async Task<ActionResult<DeviceType>> create(string DeviceBrand, string GenerationCapacity, int FarmId, int EnergyMeterId, int DeviceTypeId)
         {
-            try
+            var createDevice = await _deviceService.Create(DeviceBrand, GenerationCapacity, FarmId, EnergyMeterId, DeviceTypeId);
+            if (createDevice == null)
             {
-                var createDevice = await _service.Create(device);
-                return CreatedAtAction("GetDevice", new { id = createDevice.DeviceId }, createDevice);
+                return BadRequest("Device not Created");
             }
-            catch (ArgumentNullException)
-            {
-                return BadRequest(new { message = "Device cannot be null" });
-            }
+            return Ok(createDevice);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, Device device)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Update(int id, string DeviceBrand, string GenerationCapacity, int FarmId, int EnergyMeterId, int DeviceTypeId)
         {
-            if (id != device.DeviceId)
+            var createDevice = await _deviceService.Update(id, DeviceBrand, GenerationCapacity, FarmId, EnergyMeterId, DeviceTypeId);
+            if (createDevice == null)
             {
-                return BadRequest();
+                return BadRequest("Device not Updated");
             }
-
-            try
-            {
-                await _service.Update(device);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "Device not found" });
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
-            }
-
-            return NoContent();
+            return Ok(createDevice);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDevice(int id)
         {
-            try
+            var device = await _deviceService.DeleteDevice(id);
+            if (device == null)
             {
-                await _service.DeleteDevice(id);
-                return NoContent();
+                return BadRequest("Device not Deleted");
             }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "Device not found" });
-            }
+            return Ok(device);
+
         }
     }
 }

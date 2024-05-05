@@ -10,88 +10,62 @@ namespace SystemInfo.Controllers
     [ApiController]
     public class FarmerController : ControllerBase
     {
-        private readonly FarmerService _service;
+        private readonly IFarmerService _farmerService;
 
-        public FarmerController(FarmerService service)
+        public FarmerController(IFarmerService farmerService)
         {
-            _service = service;
+            _farmerService = farmerService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Farmer>>> GetAll()
+        public async Task<ActionResult<List<FarmType>>> GetAll()
         {
-            var result = await _service.GetAll();
-            if (!result.Any())
-            {
-                return NotFound(new { message = "Farmer not found" });
-            }
-
-            return result.ToList();
+            return Ok(await _farmerService.GetAll());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Farmer>> GetFarmer(int id)
         {
-            try
+            var farmer = await _farmerService.GetFarmer(id);
+            if (farmer == null)
             {
-                var farmer = await _service.GetFarmer(id);
-                return farmer;
+                return BadRequest("Farmer not found");
             }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "Farmer not found" });
-            }
+
+            return Ok(farmer);
         }
         [HttpPost]
-        public async Task<ActionResult<Farmer>> create(Farmer farmer)
+        public async Task<ActionResult<Farmer>> create(string name, string lastname, int contactType, string contact, string address)
         {
-            try
+            var createFarmer = await _farmerService.Create(name, lastname, contactType, contact, address);
+            if (createFarmer == null)
             {
-                var createFarmer = await _service.Create(farmer);
-                return CreatedAtAction("GetFarmer", new { id = createFarmer.FarmerId }, createFarmer);
+                return BadRequest("Farmer not Created");
             }
-            catch (ArgumentNullException)
-            {
-                return BadRequest(new { message = "Farmer cannot be null." });
-            }
+            return Ok(createFarmer);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, Farmer farmer)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Update(int id, string name, string lastname, int contactType, string contact, string address)
         {
-            if (id != farmer.FarmerId)
+            var createFarmer = await _farmerService.Update(id, name, lastname, contactType, contact, address);
+            if (createFarmer == null)
             {
-                return BadRequest();
+                return BadRequest("Farmer not Updated");
             }
-
-            try
-            {
-                await _service.Update(farmer);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "Farmer not found" });
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
-            }
-
-            return NoContent();
+            return Ok(createFarmer);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFarmer(int id)
+        public async Task<IActionResult> DeleteFarmType(int id)
         {
-            try
+            var farmer = await _farmerService.DeleteFarmer(id);
+            if (farmer == null)
             {
-                await _service.DeleteFarmer(id);
-                return NoContent();
+                return BadRequest("Farmer not Deleted");
             }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "Farmer not found" });
-            }
+            return Ok(farmer);
+
         }
     }
 }

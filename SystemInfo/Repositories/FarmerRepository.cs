@@ -9,10 +9,10 @@ namespace SystemInfo.Repositories
     public interface IFarmerRepository
     {
         Task<List<Farmer>> GetAll();
-        Task<Farmer> GetFarmer(int? id);
-        Task<Farmer> Create(Farmer farmer);
-        Task<Farmer> Update(Farmer farmer);
-        Task<Farmer> DeleteFarmer(Farmer farmer);
+        Task<Farmer> GetFarmer(int id);
+        Task<Farmer> Create(string name, string lastname, int contactType, string contact, string address);
+        Task<Farmer> Update(int id, string name, string lastname, int contactType, string contact, string address);
+        Task<Farmer> DeleteFarmer(int id);
     }
     public class FarmerRepository : IFarmerRepository
     {
@@ -24,8 +24,17 @@ namespace SystemInfo.Repositories
         {
             _db = db;
         }
-        public async Task<Farmer> Create(Farmer farmer)
+        public async Task<Farmer> Create(string name, string lastname, int contactType, string contact, string address)
         {
+            Farmer farmer = new Farmer
+            {
+                Name = name,
+                LastName = lastname,
+                ContactTypeId = contactType,
+                Contact = contact,
+                Address = address
+            };
+
             await _db.Farmers.AddAsync(farmer);
             _db.SaveChanges();
             return farmer;
@@ -36,22 +45,36 @@ namespace SystemInfo.Repositories
             return await _db.Farmers.ToListAsync();
         }
 
-        public async Task<Farmer> GetFarmer(int? id)
+        public async Task<Farmer> GetFarmer(int id)
         {
             return await _db.Farmers.FirstOrDefaultAsync(u => u.FarmerId == id );
         }
 
 
-        public Task<Farmer> DeleteFarmer(Farmer farmer)
+        public async Task<Farmer> DeleteFarmer(int id)
         {
-            throw new NotImplementedException();
+            Farmer farmer = await GetFarmer(id);
+            if (farmer != null)
+            {
+                farmer.isDeleted = true;
+            }
+            return farmer;
         }
 
-        public async Task<Farmer> Update(Farmer farmer)
+        public async Task<Farmer> Update(int id, string name, string lastname, int contactType, string contact, string address)
         {
-            _db.Farmers.Update(farmer);
-            await _db.SaveChangesAsync();
-            return farmer;
+            Farmer resultFarmer = await GetFarmer(id);
+            if(resultFarmer != null)
+            {
+                resultFarmer.Name = name;
+                resultFarmer.LastName = lastname;
+                resultFarmer.ContactTypeId = contactType;
+                resultFarmer.Contact = contact;
+                resultFarmer.Address = address;
+
+                await _db.SaveChangesAsync();
+            }
+            return resultFarmer;
         }
     }
 }

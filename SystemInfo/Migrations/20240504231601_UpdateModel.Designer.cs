@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SystemInfo.Context;
 
@@ -11,9 +12,11 @@ using SystemInfo.Context;
 namespace SystemInfo.Migrations
 {
     [DbContext(typeof(SystemContext))]
-    partial class SystemContextModelSnapshot : ModelSnapshot
+    [Migration("20240504231601_UpdateModel")]
+    partial class UpdateModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,9 +36,6 @@ namespace SystemInfo.Migrations
                     b.Property<string>("TypeContact")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
 
                     b.HasKey("ContactTypeId");
 
@@ -67,9 +67,6 @@ namespace SystemInfo.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("DeviceId");
 
                     b.HasIndex("DeviceTypeId");
@@ -92,9 +89,6 @@ namespace SystemInfo.Migrations
                     b.Property<string>("TypeDevice")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
 
                     b.HasKey("DeviceTypeId");
 
@@ -123,9 +117,6 @@ namespace SystemInfo.Migrations
                     b.Property<DateTime>("ReadingDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("EnergyLogId");
 
                     b.HasIndex("EnergyMeterId");
@@ -147,9 +138,6 @@ namespace SystemInfo.Migrations
 
                     b.Property<DateTime>("InstalationDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
 
                     b.HasKey("EnergyMeterId");
 
@@ -186,9 +174,6 @@ namespace SystemInfo.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("FarmId");
 
                     b.HasIndex("FarmTypeId");
@@ -209,9 +194,6 @@ namespace SystemInfo.Migrations
                     b.Property<string>("TypeFarm")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
 
                     b.HasKey("FarmTypeId");
 
@@ -245,9 +227,6 @@ namespace SystemInfo.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("FarmerId");
 
                     b.HasIndex("ContactTypeId");
@@ -273,9 +252,6 @@ namespace SystemInfo.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("GameId");
 
                     b.HasIndex("UserId");
@@ -297,9 +273,6 @@ namespace SystemInfo.Migrations
                     b.Property<string>("ScoreValue")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
 
                     b.HasKey("ScoreId");
 
@@ -331,9 +304,6 @@ namespace SystemInfo.Migrations
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
 
                     b.HasKey("UserId");
 

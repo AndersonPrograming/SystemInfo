@@ -10,9 +10,9 @@ namespace SystemInfo.Repositories
     {
         Task<List<DeviceType>> GetAll();
         Task<DeviceType> GetDeviceType(int? id);
-        Task<DeviceType> Create(DeviceType deviceType);
-        Task<DeviceType> Update(DeviceType deviceType);
-        Task<DeviceType> DeleteDeviceType(DeviceType deviceType);
+        Task<DeviceType> Create(string deviceType);
+        Task<DeviceType> Update(int id, string deviceType);
+        Task<DeviceType> DeleteDeviceType(int id);
     }
     public class DeviceTypeRepository: IDeviceTypeRepository
     {
@@ -25,16 +25,25 @@ namespace SystemInfo.Repositories
             _db = db;
         }
 
-        public async Task<DeviceType> Create(DeviceType deviceType)
+        public async Task<DeviceType> Create(string deviceType)
         {
-            await _db.DeviceTypes.AddAsync(deviceType);
+            DeviceType resultDeviceType = new DeviceType
+            {
+                TypeDevice = deviceType,
+            };
+            await _db.DeviceTypes.AddAsync(resultDeviceType);
             _db.SaveChanges();
-            return deviceType;
+            return resultDeviceType;
         }
 
-        public Task<DeviceType> DeleteDeviceType(DeviceType deviceType)
+        public async Task<DeviceType> DeleteDeviceType(int id)
         {
-            throw new NotImplementedException();
+            DeviceType deviceType = await GetDeviceType(id);
+            if (deviceType != null)
+            {
+                deviceType.isDeleted = true;
+            }
+            return deviceType;
         }
 
         public async Task<List<DeviceType>> GetAll()
@@ -47,11 +56,17 @@ namespace SystemInfo.Repositories
             return await _db.DeviceTypes.FirstOrDefaultAsync(u => u.DeviceTypeId == id);
         }
 
-        public async Task<DeviceType> Update(DeviceType deviceType)
+        public async Task<DeviceType> Update(int id, string deviceType)
         {
-            _db.DeviceTypes.Update(deviceType);
-            await _db.SaveChangesAsync();
-            return deviceType;
+            DeviceType resultDeviceType = await GetDeviceType(id);
+            if (resultDeviceType != null)
+            {
+                resultDeviceType.TypeDevice = deviceType;
+
+                await _db.SaveChangesAsync();
+            }
+            
+            return resultDeviceType;
         }
     }
 }

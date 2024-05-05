@@ -10,13 +10,13 @@ namespace SystemInfo.Repositories
     {
         Task<List<ContactType>> GetAll();
         Task<ContactType> GetContactType(int? id);
-        Task<ContactType> Create(ContactType contactType);
-        Task<ContactType> Update(ContactType contactType);
-        Task<ContactType> DeleteContactType(ContactType contactType);
+        Task<ContactType> Create(string contactType);
+        Task<ContactType> Update(int id, string contactType);
+        Task<ContactType> DeleteContactType(int? id);
     }
     public class ContactTypeRepository : IContactTypeRepository
     {
-        // we create a variable for the connection
+        // we create a variable for the connection 
         private readonly SystemContext _db;
 
         // we do a dependency injection
@@ -24,16 +24,25 @@ namespace SystemInfo.Repositories
         {
             _db = db;
         }
-        public async Task<ContactType> Create(ContactType contactType)
+        public async Task<ContactType> Create(string contactType)
         {
-            await _db.ContactTypes.AddAsync(contactType);
+            ContactType resultContactType = new ContactType
+            {
+                TypeContact = contactType,
+            };
+            await _db.ContactTypes.AddAsync(resultContactType);
             _db.SaveChanges();
-            return contactType;
+            return resultContactType;
         }
 
-        public Task<ContactType> DeleteContactType(ContactType contactType)
+        public async Task<ContactType> DeleteContactType(int? id)
         {
-            throw new NotImplementedException();
+            ContactType contactType = await GetContactType(id);
+            if (contactType != null)
+            {
+                contactType.isDeleted = true;
+            }
+            return contactType;
         }
 
         public async Task<List<ContactType>> GetAll()
@@ -46,11 +55,15 @@ namespace SystemInfo.Repositories
             return await _db.ContactTypes.FirstOrDefaultAsync(u => u.ContactTypeId == id);
         }
 
-        public async Task<ContactType> Update(ContactType contactType)
+        public async Task<ContactType> Update(int id, string contactType)
         {
-            _db.ContactTypes.Update(contactType);
-            await _db.SaveChangesAsync();
-            return contactType;
+            ContactType resultContactType = await GetContactType(id);
+            if (resultContactType != null)
+            {
+                resultContactType.TypeContact = contactType;
+                await _db.SaveChangesAsync();
+            }
+            return resultContactType;
         }
     }
 }

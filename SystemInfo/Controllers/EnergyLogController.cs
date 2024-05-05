@@ -10,88 +10,62 @@ namespace SystemInfo.Controllers
     [ApiController]
     public class EnergyLogController : ControllerBase
     {
-        private readonly EnergyLogService _service;
+        private readonly IEnergyLogService _energyLogService;
 
-        public EnergyLogController(EnergyLogService service)
+        public EnergyLogController(IEnergyLogService energyLogService)
         {
-            _service = service;
+            _energyLogService = energyLogService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EnergyLog>>> GetAll()
+        public async Task<ActionResult<List<EnergyLog>>> GetAll()
         {
-            var result = await _service.GetAll();
-            if (!result.Any())
-            {
-                return NotFound(new { message = "EnergyLog not found" });
-            }
-
-            return result.ToList();
+            return Ok(await _energyLogService.GetAll());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<EnergyLog>> GetEnergyLog(int id)
         {
-            try
+            var energyLog = await _energyLogService.GetEnergyLog(id);
+            if (energyLog == null)
             {
-                var energyLog = await _service.GetEnergyLog(id);
-                return energyLog;
+                return BadRequest("energyLog not found");
             }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "EnergyLog not found" });
-            }
+
+            return Ok(energyLog);
         }
         [HttpPost]
-        public async Task<ActionResult<EnergyLog>> create(EnergyLog energyLog)
+        public async Task<ActionResult<EnergyLog>> create(DateTime ReadingDate, string GeneratedEnergyKWH, string ConsumedEnergyKWH, int EnergyMeterId)
         {
-            try
+            var createEnergyLog = await _energyLogService.Create(ReadingDate, GeneratedEnergyKWH, ConsumedEnergyKWH, EnergyMeterId);
+            if (createEnergyLog == null)
             {
-                var createEnergyLog = await _service.Create(energyLog);
-                return CreatedAtAction("GetEnergyLog", new { id = createEnergyLog.EnergyLogId }, createEnergyLog);
+                return BadRequest("EnergyLog not Created");
             }
-            catch (ArgumentNullException)
-            {
-                return BadRequest(new { message = "EnergyLog cannot be null" });
-            }
+            return Ok(createEnergyLog);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, EnergyLog energyLog)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Update(int id, DateTime ReadingDate, string GeneratedEnergyKWH, string ConsumedEnergyKWH, int EnergyMeterId)
         {
-            if (id != energyLog.EnergyLogId)
+            var createEnergyLog = await _energyLogService.Update(id, ReadingDate, GeneratedEnergyKWH, ConsumedEnergyKWH, EnergyMeterId);
+            if (createEnergyLog == null)
             {
-                return BadRequest();
+                return BadRequest("EnergyLog not Updated");
             }
-
-            try
-            {
-                await _service.Update(energyLog);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "EnergyLog not found" });
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
-            }
-
-            return NoContent();
+            return Ok(createEnergyLog);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEnergyLog(int id)
         {
-            try
+            var energyLog = await _energyLogService.DeleteEnergyLog(id);
+            if (energyLog == null)
             {
-                await _service.DeleteEnergyLog(id);
-                return NoContent();
+                return BadRequest("EnergyLog not Deleted");
             }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "EnergyLog not found" });
-            }
+            return Ok(energyLog);
+
         }
     }
 }

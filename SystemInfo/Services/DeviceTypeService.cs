@@ -8,34 +8,27 @@ namespace SystemInfo.Services
     {
         Task<List<DeviceType>> GetAll();
         Task<DeviceType> GetDeviceType(int? id);
-        Task<DeviceType> Create(DeviceType deviceType);
-        Task<DeviceType> Update(DeviceType deviceType);
-        Task<DeviceType> DeleteDeviceType(int? id);
+        Task<DeviceType> Create(string deviceType);
+        Task<DeviceType> Update(int id, string deviceType);
+        Task<DeviceType> DeleteDeviceType(int id);
     }
     public class DeviceTypeService: IDeviceTypeService
     {
-        public readonly DeviceTypeRepository _deviceTypeRepository;
+        public readonly IDeviceTypeRepository _deviceTypeRepository;
 
-        public DeviceTypeService(DeviceTypeRepository deviceTypeRepository)
+        public DeviceTypeService(IDeviceTypeRepository deviceTypeRepository)
         {
             _deviceTypeRepository = deviceTypeRepository;
         }
 
-        public async Task<DeviceType> Create(DeviceType deviceType)
+        public async Task<DeviceType> Create(string deviceType)
         {
-            DeviceType newDeviceType = new DeviceType
-            {
-                TypeDevice = deviceType.TypeDevice,
-            };
-
-            return await _deviceTypeRepository.Create(newDeviceType);
+            return await _deviceTypeRepository.Create(deviceType);
         }
 
-        public async Task<DeviceType> DeleteDeviceType(int? id)
+        public async Task<DeviceType> DeleteDeviceType(int id)
         {
-            DeviceType newDeviceType = await GetDeviceType(id);
-
-            return await _deviceTypeRepository.DeleteDeviceType(newDeviceType);
+            return await _deviceTypeRepository.DeleteDeviceType(id);
         }
 
         public Task<List<DeviceType>> GetAll()
@@ -48,21 +41,10 @@ namespace SystemInfo.Services
             return await _deviceTypeRepository.GetDeviceType(id);
         }
 
-        public async Task<DeviceType> Update(DeviceType deviceType)
+        public async Task<DeviceType> Update(int id, string deviceType)
         {
-            DeviceType newDeviceType = await GetDeviceType(deviceType.DeviceTypeId);
-
-            if (newDeviceType != null)
-            {
-                if (deviceType.TypeDevice != null)
-                {
-                    newDeviceType.TypeDevice = deviceType.TypeDevice;
-                }
-
-                return await _deviceTypeRepository.Update(newDeviceType);
-            }
+            return await _deviceTypeRepository.Update(id, deviceType);
             throw new NotImplementedException();
-   
         }
     }
 }

@@ -10,88 +10,62 @@ namespace SystemInfo.Controllers
     [ApiController]
     public class DeviceTypeController : ControllerBase
     {
-        private readonly DeviceTypeService _service;
+        private readonly IDeviceTypeService _deviceTypeService;
 
-        public DeviceTypeController(DeviceTypeService service)
+        public DeviceTypeController(IDeviceTypeService deviceTypeService)
         {
-            _service = service;
+            _deviceTypeService = deviceTypeService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DeviceType>>> GetAll()
+        public async Task<ActionResult<List<DeviceType>>> GetAll()
         {
-            var result = await _service.GetAll();
-            if (!result.Any())
-            {
-                return NotFound(new { message = "DeviceType not found" });
-            }
-
-            return result.ToList();
+            return Ok(await _deviceTypeService.GetAll());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<DeviceType>> GetDeviceType(int id)
         {
-            try
+            var deviceType = await _deviceTypeService.GetDeviceType(id);
+            if (deviceType == null)
             {
-                var deviceType = await _service.GetDeviceType(id);
-                return deviceType;
+                return BadRequest("DeviceType not found");
             }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "DeviceType not found" });
-            }
+
+            return Ok(deviceType);
         }
         [HttpPost]
-        public async Task<ActionResult<DeviceType>> create(DeviceType deviceType)
+        public async Task<ActionResult<DeviceType>> create(string deviceType)
         {
-            try
+            var createDeviceType = await _deviceTypeService.Create(deviceType);
+            if (createDeviceType == null)
             {
-                var createDeviceType = await _service.Create(deviceType);
-                return CreatedAtAction("GetDeviceType", new { id = createDeviceType.DeviceTypeId }, createDeviceType);
+                return BadRequest("DeviceType not Created");
             }
-            catch (ArgumentNullException)
-            {
-                return BadRequest(new { message = "DeviceType cannot be null" });
-            }
+            return Ok(createDeviceType);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, DeviceType deviceType)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Update(int id, string deviceType)
         {
-            if (id != deviceType.DeviceTypeId)
+            var createDeviceType = await _deviceTypeService.Update(id, deviceType);
+            if (createDeviceType == null)
             {
-                return BadRequest();
+                return BadRequest("DeviceType not Updated");
             }
-
-            try
-            {
-                await _service.Update(deviceType);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "DeviceType not found" });
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
-            }
-
-            return NoContent();
+            return Ok(deviceType);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDeviceType(int id)
         {
-            try
+            var deviceType = await _deviceTypeService.DeleteDeviceType(id);
+            if (deviceType == null)
             {
-                await _service.DeleteDeviceType(id);
-                return NoContent();
+                return BadRequest("DeviceType not Deleted");
             }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "DeviceType not found" });
-            }
+            return Ok(deviceType);
+
         }
     }
 }

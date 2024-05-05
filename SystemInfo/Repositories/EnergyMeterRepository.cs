@@ -9,10 +9,10 @@ namespace SystemInfo.Repositories
     public interface IEnergyMeterRepository
     {
         Task<List<EnergyMeter>> GetAll();
-        Task<EnergyMeter> GetEnergyMeter(int id);
-        Task<EnergyMeter> Create(EnergyMeter energyMeter);
-        Task<EnergyMeter> Update(EnergyMeter energyMeter);
-        Task<EnergyMeter> DeleteEnergyMeter(EnergyMeter energyMeter);
+        Task<EnergyMeter> GetEnergyMeter(int? id);
+        Task<EnergyMeter> Create(string energyMeterBrand, DateTime instalationDate);
+        Task<EnergyMeter> Update(int id, string energyMeterBrand, DateTime instalationDate);
+        Task<EnergyMeter> DeleteEnergyMeter(int id);
     }
     public class EnergyMeterRepository : IEnergyMeterRepository
     {
@@ -24,16 +24,26 @@ namespace SystemInfo.Repositories
         {
             _db = db;
         }
-        public async Task<EnergyMeter> Create(EnergyMeter energyMeter)
+        public async Task<EnergyMeter> Create(string energyMeterBrand, DateTime instalationDate)
         {
+            EnergyMeter energyMeter = new EnergyMeter
+            {
+                EnergyMeterBrand = energyMeterBrand,
+                InstalationDate = instalationDate
+            };
             await _db.EnergyMeters.AddAsync(energyMeter);
             _db.SaveChanges();
             return energyMeter;
         }
 
-        public Task<EnergyMeter> DeleteEnergyMeter(EnergyMeter energyMeter)
+        public async Task<EnergyMeter> DeleteEnergyMeter(int id)
         {
-            throw new NotImplementedException();
+            EnergyMeter energyMeter = await GetEnergyMeter(id);
+            if (energyMeter != null)
+            {
+                energyMeter.isDeleted = true;
+            }
+            return energyMeter;
         }
 
         public async Task<List<EnergyMeter>> GetAll()
@@ -41,16 +51,23 @@ namespace SystemInfo.Repositories
             return await _db.EnergyMeters.ToListAsync();
         }
 
-        public async Task<EnergyMeter> GetEnergyMeter(int id)
+        public async Task<EnergyMeter> GetEnergyMeter(int? id)
         {
             return await _db.EnergyMeters.FirstOrDefaultAsync(u => u.EnergyMeterId == id);
         }
 
-        public async Task<EnergyMeter> Update(EnergyMeter energyMeter)
+        public async Task<EnergyMeter> Update(int id, string energyMeterBrand, DateTime instalationDate)
         {
-            _db.EnergyMeters.Update(energyMeter);
-            await _db.SaveChangesAsync();
-            return energyMeter;
+            EnergyMeter resultEnergyMeter = await GetEnergyMeter(id);
+            if(resultEnergyMeter != null)
+            {
+                resultEnergyMeter.EnergyMeterBrand = energyMeterBrand;
+                resultEnergyMeter.InstalationDate = instalationDate;
+
+                await _db.SaveChangesAsync();
+            }
+            
+            return resultEnergyMeter;
         }
     }
 }

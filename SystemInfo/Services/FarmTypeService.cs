@@ -1,4 +1,5 @@
-﻿using SystemInfo.Models;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using SystemInfo.Models;
 using SystemInfo.Repositories;
 
 namespace SystemInfo.Services
@@ -7,34 +8,28 @@ namespace SystemInfo.Services
     {
         Task<List<FarmType>> GetAll();
         Task<FarmType> GetFarmType(int? id);
-        Task<FarmType> Create(FarmType FarmType);
-        Task<FarmType> Update(FarmType FarmType);
+        Task<FarmType> Create(string FarmType);
+        Task<FarmType> Update(int id, string FarmType);
         Task<FarmType> DeleteFarmType(int? id);
     }
     public class FarmTypeService: IFarmTypeService
     {
-        public readonly FarmTypeRepository _farmTypeRepository;
+        public readonly IFarmTypeRepository _farmTypeRepository;
 
-        public FarmTypeService(FarmTypeRepository farmTypeRepository)
+        public FarmTypeService(IFarmTypeRepository farmTypeRepository)
         {
             _farmTypeRepository = farmTypeRepository;
         }
 
-        public async Task<FarmType> Create(FarmType FarmType)
+        public async Task<FarmType> Create(string FarmType)
         {
-            FarmType newFarmType = new FarmType
-            {
-                TypeFarm = FarmType.TypeFarm,
-
-            };
-
-            return await _farmTypeRepository.Create(newFarmType);
+            return await _farmTypeRepository.Create(FarmType);
         }
 
         public async Task<FarmType> DeleteFarmType(int? id)
         {
-            FarmType newFarmType = await GetFarmType(id);
-            return await _farmTypeRepository.DeleteFarmType(newFarmType);
+
+            return await _farmTypeRepository.DeleteFarmType(id);
         }
 
         public async Task<List<FarmType>> GetAll()
@@ -47,18 +42,10 @@ namespace SystemInfo.Services
             return await _farmTypeRepository.GetFarmType(id);
         }
 
-        public async Task<FarmType> Update(FarmType FarmType)
+        public async Task<FarmType> Update(int id, string FarmType)
         {
-            FarmType newFarmType = await GetFarmType(FarmType.FarmTypeId);
-            if (newFarmType != null)
-            {
-                if (FarmType.TypeFarm != null)
-                {
-                    newFarmType.TypeFarm = FarmType.TypeFarm;
-                }
+            return await _farmTypeRepository.Update(id, FarmType);
 
-                return await _farmTypeRepository.Update(newFarmType);
-            }
             throw new NotImplementedException();
         }
     }

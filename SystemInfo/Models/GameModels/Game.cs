@@ -3,9 +3,12 @@
     public class Game
     {
         public int GameId { get; set; }
-        public required Score Score { get; set; }
+        public required int UserId { get; set; }
+        public required  DateTime GameDate { get; set; }
+        public required string EnergyType { get; set; }
+        public bool isDeleted { get; set; } = false;
 
-        public required List<User> Users { get; set; }
-
+        public User? User { get; set; }
+        public List<Score>? Scores { get; set; }
     }
 }

@@ -8,10 +8,10 @@ namespace SystemInfo.Repositories
     public interface IFarmTypeRepository
     {
         Task<List<FarmType>> GetAll();
-        Task<FarmType> GetFarmType(int? id);
-        Task<FarmType> Create(FarmType farmType);
-        Task<FarmType> Update(FarmType farmType);
-        Task<FarmType> DeleteFarmType(FarmType farmType);
+        Task<FarmType> GetFarmType(int id);
+        Task<FarmType> Create(string farmType);
+        Task<FarmType> Update(int id, string farmType);
+        Task<FarmType> DeleteFarmType(int id);
     }
     public class FarmTypeRepository : IFarmTypeRepository
     {
@@ -22,16 +22,27 @@ namespace SystemInfo.Repositories
         {
             _db = db;
         }
-        public async Task<FarmType> Create(FarmType farmType)
+        public async Task<FarmType> Create(string farmType)
         {
-            await _db.FarmTypes.AddAsync(farmType);
+            FarmType newFarmType = new FarmType
+            {
+                TypeFarm = farmType,
+
+            };
+
+            await _db.FarmTypes.AddAsync(newFarmType);
             _db.SaveChanges();
-            return farmType;
+            return newFarmType;
         }
 
-        public Task<FarmType> DeleteFarmType(FarmType farmType)
+        public async Task<FarmType> DeleteFarmType(int id)
         {
-            throw new NotImplementedException();
+            FarmType farmType = await GetFarmType(id);
+            if(farmType != null)
+            {
+                farmType.isDeleted = true;
+            }
+            return farmType;
         }
 
         public async Task<List<FarmType>> GetAll()
@@ -39,16 +50,23 @@ namespace SystemInfo.Repositories
             return await _db.FarmTypes.ToListAsync();
         }
 
-        public async Task<FarmType> GetFarmType(int? id)
+        public async Task<FarmType> GetFarmType(int id)
         {
             return await _db.FarmTypes.FirstOrDefaultAsync(u => u.FarmTypeId == id);
         }
 
-        public async Task<FarmType> Update(FarmType farmType)
+        public async Task<FarmType> Update(int id, string farmType)
         {
-           _db.FarmTypes.Update(farmType);
-            await _db.SaveChangesAsync();
-            return farmType;
+            FarmType reultFarmType = await GetFarmType(id);
+
+            if(reultFarmType != null)
+            {
+                reultFarmType.TypeFarm = farmType;
+
+                await _db.SaveChangesAsync();
+            }
+
+            return reultFarmType;
         }
     }
 }

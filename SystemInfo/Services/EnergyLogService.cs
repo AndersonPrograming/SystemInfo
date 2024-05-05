@@ -9,36 +9,27 @@ namespace SystemInfo.Services
     {
         Task<List<EnergyLog>> GetAll();
         Task<EnergyLog> GetEnergyLog(int? id);
-        Task<EnergyLog> Create(EnergyLog energyLog);
-        Task<EnergyLog> Update(EnergyLog energyLog);
-        Task<EnergyLog> DeleteEnergyLog(int? id);
+        Task<EnergyLog> Create(DateTime ReadingDate, string GeneratedEnergyKWH, string ConsumedEnergyKWH, int EnergyMeterId);
+        Task<EnergyLog> Update(int id, DateTime ReadingDate, string GeneratedEnergyKWH, string ConsumedEnergyKWH, int EnergyMeterId);
+        Task<EnergyLog> DeleteEnergyLog(int id);
     }
     public class EnergyLogService: IEnergyLogService
     {
-        public readonly EnergyLogRepository _energyLogRepository;
+        public readonly IEnergyLogRepository _energyLogRepository;
 
-        public EnergyLogService(EnergyLogRepository energyLogRepository)
+        public EnergyLogService(IEnergyLogRepository energyLogRepository)
         {
             _energyLogRepository = energyLogRepository;
         }
 
-        public async Task<EnergyLog> Create(EnergyLog energyLog)
+        public async Task<EnergyLog> Create(DateTime ReadingDate, string GeneratedEnergyKWH, string ConsumedEnergyKWH, int EnergyMeterId)
         {
-            EnergyLog newEnergyLog = new EnergyLog
-            {
-                ReadingDate = (DateTime)energyLog.ReadingDate,
-                GeneratedEnergyKWH = energyLog.GeneratedEnergyKWH,
-                ConsumedEnergyKWH = energyLog.ConsumedEnergyKWH,
-                EnergyMeter = energyLog.EnergyMeter,
-
-            };
-            return await _energyLogRepository.Create(newEnergyLog);
+            return await _energyLogRepository.Create(ReadingDate, GeneratedEnergyKWH, ConsumedEnergyKWH, EnergyMeterId);
         }
 
-        public async Task<EnergyLog> DeleteEnergyLog(int? id)
+        public async Task<EnergyLog> DeleteEnergyLog(int id)
         {
-            EnergyLog newEnergyLog = await GetEnergyLog(id);  
-            return await _energyLogRepository.DeleteEnergyLog(newEnergyLog);
+            return await _energyLogRepository.DeleteEnergyLog(id);
         }
 
         public async Task<List<EnergyLog>> GetAll()
@@ -51,28 +42,10 @@ namespace SystemInfo.Services
             return await _energyLogRepository.GetEnergyLog(id);
         }
 
-        public async Task<EnergyLog> Update(EnergyLog energyLog)
+        public async Task<EnergyLog> Update(int id, DateTime ReadingDate, string GeneratedEnergyKWH, string ConsumedEnergyKWH, int EnergyMeterId)
         {
-            EnergyLog newEnergyLog = await GetEnergyLog(energyLog.EnergyLogId);
-            if (newEnergyLog != null)
-            {
-                if (energyLog.ReadingDate != null)
-                {
-                    newEnergyLog.ReadingDate = (DateTime)energyLog.ReadingDate;
-                }
-                if (energyLog.GeneratedEnergyKWH != null)
-                {
-                    newEnergyLog.GeneratedEnergyKWH = energyLog.GeneratedEnergyKWH;
-                }
-                if (energyLog.ConsumedEnergyKWH != null)
-                {
-                    newEnergyLog.ConsumedEnergyKWH = energyLog.ConsumedEnergyKWH;
-                }
-
-                return await _energyLogRepository.Update(newEnergyLog);
-            }
+            return await _energyLogRepository.Update(id, ReadingDate, GeneratedEnergyKWH, ConsumedEnergyKWH, EnergyMeterId);
             throw new NotImplementedException();
-           
         }
     }
 }

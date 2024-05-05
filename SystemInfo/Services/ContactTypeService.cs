@@ -9,34 +9,27 @@ namespace SystemInfo.Services
     {
         Task<List<ContactType>> GetAll();
         Task<ContactType> GetContactType(int? id);
-        Task<ContactType> Create(ContactType TypeContact);
-        Task<ContactType> Update(ContactType TypeContact);
+        Task<ContactType> Create(string TypeContact);
+        Task<ContactType> Update(int id, string TypeContact);
         Task<ContactType> DeleteContactType(int? id);
     }
     public class ContactTypeService: IContactTypeService
     {
-        public readonly ContactTypeRepository _contactTypeRepository;
+        public readonly IContactTypeRepository _contactTypeRepository;
 
-        public ContactTypeService(ContactTypeRepository contactTypeRepository)
+        public ContactTypeService(IContactTypeRepository contactTypeRepository)
         {
             _contactTypeRepository = contactTypeRepository;
         }
 
-        public async Task<ContactType> Create(ContactType TypeContact)
+        public async Task<ContactType> Create(string typeContact)
         {
-            ContactType newContactType = new ContactType
-            {
-                TypeContact = TypeContact.TypeContact,
-            };
-
-            return await _contactTypeRepository.Create(newContactType);
+            return await _contactTypeRepository.Create(typeContact);
         }
 
         public async Task<ContactType> DeleteContactType(int? id)
         {
-            ContactType newContactType = await GetContactType(id);
-
-            return await _contactTypeRepository.DeleteContactType(newContactType);
+            return await _contactTypeRepository.DeleteContactType(id);
         }
 
         public async Task<List<ContactType>> GetAll()
@@ -49,19 +42,9 @@ namespace SystemInfo.Services
             return await _contactTypeRepository.GetContactType(id);
         }
 
-        public async Task<ContactType> Update(ContactType TypeContact)
+        public async Task<ContactType> Update(int id, string typeContact)
         {
-            ContactType newContactType = await GetContactType(TypeContact.ContactTypeId);
-            if (newContactType != null)
-            {
-                if (TypeContact != null)
-                {
-                    newContactType.TypeContact = TypeContact.TypeContact;
-                }
-
-                return await _contactTypeRepository.Update(newContactType);
-            }
-            throw new NotImplementedException();
+            return await _contactTypeRepository.Update(id, typeContact);
         }
     }
 }

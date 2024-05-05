@@ -9,38 +9,28 @@ namespace SystemInfo.Services
     {
         Task<List<Farm>> GetAll();
         Task<Farm> GetFarm(int? id);
-        Task<Farm> Create(Farm farm);
-        Task<Farm> Update(Farm farm);
+        Task<Farm> Create(string farmName, string location, string farmArea, string image, int farmerId, int farmTypeId);
+        Task<Farm> Update(int id, string farmName, string location, string farmArea, string image, int farmerId, int farmTypeId);
         Task<Farm> DeleteFarm(int? id);
     }
     public class FarmService: IFarmService
     {
-        public readonly FarmRepository _farmRepository;
+        public readonly IFarmRepository _farmRepository;
 
-        public FarmService(FarmRepository farmRepository)
+        public FarmService(IFarmRepository farmRepository)
         {
             _farmRepository = farmRepository;
         }
 
-        public async Task<Farm> Create(Farm farm)
+        public async Task<Farm> Create(string farmName, string location, string farmArea, string image, int farmerId, int farmTypeId)
         {
-
-            Farm newFarm = new Farm
-            {
-                FarmName = farm.FarmName,
-                Location = farm.Location,
-                FarmArea = farm.FarmArea,
-                FarmType = farm.FarmType,
-                Image = farm.Image,
-                Farmer = farm.Farmer
-            };
-            return await _farmRepository.Create(newFarm);
+            return await _farmRepository.Create( farmName, location, farmArea, image, farmerId, farmTypeId);
         }
 
         public async Task<Farm> DeleteFarm(int? id)
         {
             Farm newFarm = await GetFarm(id);
-            return await _farmRepository.DeleteFarm(newFarm);
+            return await _farmRepository.DeleteFarm(id);
         }
 
         public async Task<List<Farm>> GetAll()
@@ -53,38 +43,10 @@ namespace SystemInfo.Services
             return await _farmRepository.GetFarm(id);
         }
 
-        public async Task<Farm> Update(Farm farm)
+        public async Task<Farm> Update(int id, string farmName, string location, string farmArea, string image, int farmerId, int farmTypeId)
         {
-            Farm newFarm = await GetFarm(farm.FarmId);
-            if (newFarm != null)
-            {
-                if (farm.FarmName != null)
-                {
-                    newFarm.FarmName = farm.FarmName;
-                }
-                if (farm.Location != null)
-                {
-                    newFarm.Location = farm.Location;
-                }
-                if (farm.FarmArea != null)
-                {
-                    newFarm.FarmArea = farm.FarmArea;
-                }
-                if (farm.FarmType != null)
-                {
-                    newFarm.FarmType = farm.FarmType;
-                }
-                if (farm.Image != null)
-                {
-                    newFarm.Image = farm.Image;
-                }
-                if (farm.Farmer != null)
-                {
-                    newFarm.Farmer = farm.Farmer;
-                }
-
-                return await _farmRepository.Update(newFarm);
-            }
+ 
+            return await _farmRepository.Update(id, farmName, location, farmArea, image, farmerId, farmTypeId);
             throw new NotImplementedException();
     
         }

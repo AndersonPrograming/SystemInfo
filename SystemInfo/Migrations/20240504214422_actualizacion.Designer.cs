@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SystemInfo.Context;
 
@@ -11,9 +12,11 @@ using SystemInfo.Context;
 namespace SystemInfo.Migrations
 {
     [DbContext(typeof(SystemContext))]
-    partial class SystemContextModelSnapshot : ModelSnapshot
+    [Migration("20240504214422_actualizacion")]
+    partial class Actualizacion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,9 +36,6 @@ namespace SystemInfo.Migrations
                     b.Property<string>("TypeContact")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
 
                     b.HasKey("ContactTypeId");
 
@@ -67,9 +67,6 @@ namespace SystemInfo.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("DeviceId");
 
                     b.HasIndex("DeviceTypeId");
@@ -92,9 +89,6 @@ namespace SystemInfo.Migrations
                     b.Property<string>("TypeDevice")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
 
                     b.HasKey("DeviceTypeId");
 
@@ -123,9 +117,6 @@ namespace SystemInfo.Migrations
                     b.Property<DateTime>("ReadingDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("EnergyLogId");
 
                     b.HasIndex("EnergyMeterId");
@@ -147,9 +138,6 @@ namespace SystemInfo.Migrations
 
                     b.Property<DateTime>("InstalationDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
 
                     b.HasKey("EnergyMeterId");
 
@@ -186,9 +174,6 @@ namespace SystemInfo.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("FarmId");
 
                     b.HasIndex("FarmTypeId");
@@ -209,9 +194,6 @@ namespace SystemInfo.Migrations
                     b.Property<string>("TypeFarm")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
 
                     b.HasKey("FarmTypeId");
 
@@ -245,9 +227,6 @@ namespace SystemInfo.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("FarmerId");
 
                     b.HasIndex("ContactTypeId");
@@ -263,22 +242,12 @@ namespace SystemInfo.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GameId"));
 
-                    b.Property<string>("EnergyType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("GameDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
+                    b.Property<int>("ScoreId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
 
                     b.HasKey("GameId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("ScoreId");
 
                     b.ToTable("Games");
                 });
@@ -291,19 +260,11 @@ namespace SystemInfo.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ScoreId"));
 
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ScoreValue")
+                    b.Property<string>("Time")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("ScoreId");
-
-                    b.HasIndex("GameId");
 
                     b.ToTable("Scores");
                 });
@@ -320,9 +281,8 @@ namespace SystemInfo.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -332,10 +292,9 @@ namespace SystemInfo.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("UserId");
+
+                    b.HasIndex("GameId");
 
                     b.ToTable("Users");
                 });
@@ -410,19 +369,19 @@ namespace SystemInfo.Migrations
 
             modelBuilder.Entity("SystemInfo.Models.GameModels.Game", b =>
                 {
-                    b.HasOne("SystemInfo.Models.GameModels.User", "User")
+                    b.HasOne("SystemInfo.Models.GameModels.Score", "Score")
                         .WithMany("Games")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("ScoreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Score");
                 });
 
-            modelBuilder.Entity("SystemInfo.Models.GameModels.Score", b =>
+            modelBuilder.Entity("SystemInfo.Models.GameModels.User", b =>
                 {
                     b.HasOne("SystemInfo.Models.GameModels.Game", "Game")
-                        .WithMany("Scores")
+                        .WithMany("Users")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -459,10 +418,10 @@ namespace SystemInfo.Migrations
 
             modelBuilder.Entity("SystemInfo.Models.GameModels.Game", b =>
                 {
-                    b.Navigation("Scores");
+                    b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("SystemInfo.Models.GameModels.User", b =>
+            modelBuilder.Entity("SystemInfo.Models.GameModels.Score", b =>
                 {
                     b.Navigation("Games");
                 });
