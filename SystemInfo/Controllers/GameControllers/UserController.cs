@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SystemInfo.Models.GameModels;
+using SystemInfo.Repositories;
 using SystemInfo.Services.GameServices;
 
 namespace SystemInfo.Controllers.GameControllers
@@ -42,6 +43,17 @@ namespace SystemInfo.Controllers.GameControllers
                 return BadRequest("User not Created");
             }
             return Ok(createUser);
+        }
+
+        [HttpPost("Login")]
+        public async Task<ActionResult<UserAuth>> Login(string Username, string Password)
+        {
+            var LoginUser = await _userService.Login(Username, Password);
+            if (LoginUser == null)
+            {
+                return BadRequest("User or password Incorret");
+            }
+            return Ok(LoginUser);
         }
 
         [HttpPatch("{id}")]

@@ -25,7 +25,7 @@ builder.Services.AddScoped<IFarmTypeRepository, FarmTypeRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IScoreRepository, ScoreRepository>();
-builder.Services.AddScoped<ILoginRepository, LoginRepository>();
+
 
 
 builder.Services.AddScoped<IDeviceService, DeviceService>();
@@ -40,12 +40,23 @@ builder.Services.AddScoped<IFarmTypeService, FarmTypeService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IScoreService, ScoreService>();
-builder.Services.AddScoped<ILoginService, LoginService>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
+
 
 var app = builder.Build();
 
@@ -61,5 +72,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors();
+
 
 app.Run();

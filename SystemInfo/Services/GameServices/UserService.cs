@@ -9,6 +9,7 @@ namespace SystemInfo.Services.GameServices
         Task<List<User>> GetAll();
         Task<User> GetUser(int? id);
         Task<User> Create(string Email, string Username, string Password, string image);
+        Task<UserAuth> Login(string Username, string Password);
         Task<User> Update(int id, string Email, string Username, string Password, string image);
         Task<User> DeleteUser(int id);
     }
@@ -31,6 +32,11 @@ namespace SystemInfo.Services.GameServices
       
 
             return await _userRepository.Create(Email, Username, PasswordHash, image);
+        }
+
+        public async Task<UserAuth> Login(string Username, string Password)
+        {
+            return await _userRepository.Login(Username, Password);
         }
 
         public async Task<User> DeleteUser(int id)
