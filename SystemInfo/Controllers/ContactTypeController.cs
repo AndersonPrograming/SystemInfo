@@ -35,9 +35,9 @@ namespace SystemInfo.Controllers
             return Ok(contactType);
         }
         [HttpPost]
-        public async Task<ActionResult<ContactType>> create(string contactType)
+        public async Task<ActionResult<ContactType>> create([FromBody] ModelC model)
         {
-            var createContactType = await _contactTypeService.Create(contactType);
+            var createContactType = await _contactTypeService.Create(model.contacType);
             if (createContactType == null)
             {
                 return BadRequest("ContactType not Created");
@@ -46,14 +46,14 @@ namespace SystemInfo.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> Update(int id, string contactType)
+        public async Task<IActionResult> Update([FromBody] ModelCU model)
         {
-            var createContactType = await _contactTypeService.Update(id, contactType);
+            var createContactType = await _contactTypeService.Update(model.contacTypeId, model.contacType);
             if (createContactType == null)
             {
                 return BadRequest("ContactType not Updated");
             }
-            return Ok(contactType);
+            return Ok(createContactType);
         }
 
         [HttpDelete("{id}")]
@@ -66,6 +66,16 @@ namespace SystemInfo.Controllers
             }
             return Ok(contactType);
 
+        }
+
+        public class ModelC
+        {
+            public string contacType { get; set; }
+        }
+        public class ModelCU
+        {
+            public int contacTypeId { get; set; }
+            public string contacType { get; set; }
         }
     }
 }

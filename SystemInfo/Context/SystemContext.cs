@@ -38,8 +38,8 @@ namespace SystemInfo.Context
             modelBuilder.Entity<Game>()
                 .HasKey(b => b.GameId);
 
-            modelBuilder.Entity<Score>()
-                .HasKey(b => b.ScoreId);
+            modelBuilder.Entity<Badge>()
+                .HasKey(b => b.BadgeId);
 
             modelBuilder.Entity<User>()
                 .HasKey(b => b.UserId);
@@ -58,7 +58,7 @@ namespace SystemInfo.Context
         public DbSet<ContactType> ContactTypes { get; set; }
 
         // Game
-        public DbSet<Score> Scores { get; set; }
+        public DbSet<Badge> Badges { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Game> Games { get; set; }
 

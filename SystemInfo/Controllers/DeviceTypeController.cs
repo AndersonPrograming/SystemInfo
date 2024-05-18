@@ -35,9 +35,9 @@ namespace SystemInfo.Controllers
             return Ok(deviceType);
         }
         [HttpPost]
-        public async Task<ActionResult<DeviceType>> create(string deviceType)
+        public async Task<ActionResult<DeviceType>> create([FromBody] DeviceTypeModel model)
         {
-            var createDeviceType = await _deviceTypeService.Create(deviceType);
+            var createDeviceType = await _deviceTypeService.Create(model.deviceType);
             if (createDeviceType == null)
             {
                 return BadRequest("DeviceType not Created");
@@ -46,14 +46,14 @@ namespace SystemInfo.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> Update(int id, string deviceType)
+        public async Task<IActionResult> Update([FromBody] DeviceTypeModelU model)
         {
-            var createDeviceType = await _deviceTypeService.Update(id, deviceType);
+            var createDeviceType = await _deviceTypeService.Update(model.id, model.deviceType);
             if (createDeviceType == null)
             {
                 return BadRequest("DeviceType not Updated");
             }
-            return Ok(deviceType);
+            return Ok(createDeviceType);
         }
 
         [HttpDelete("{id}")]
@@ -66,6 +66,16 @@ namespace SystemInfo.Controllers
             }
             return Ok(deviceType);
 
+        }
+
+        public class DeviceTypeModel
+        {
+           public string deviceType { get; set; }
+        }
+        public class DeviceTypeModelU
+        {
+            public int id { get; set; }
+            public string deviceType { get; set; }
         }
     }
 }

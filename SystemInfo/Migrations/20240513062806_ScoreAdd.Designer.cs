@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SystemInfo.Context;
 
@@ -11,9 +12,11 @@ using SystemInfo.Context;
 namespace SystemInfo.Migrations
 {
     [DbContext(typeof(SystemContext))]
-    partial class SystemContextModelSnapshot : ModelSnapshot
+    [Migration("20240513062806_ScoreAdd")]
+    partial class ScoreAdd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,42 +258,6 @@ namespace SystemInfo.Migrations
                     b.ToTable("Farmers");
                 });
 
-            modelBuilder.Entity("SystemInfo.Models.GameModels.Badge", b =>
-                {
-                    b.Property<int>("BadgeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BadgeId"));
-
-                    b.Property<bool>("Completed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Experience")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NameBadge")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BadgeId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Badges");
-                });
-
             modelBuilder.Entity("SystemInfo.Models.GameModels.Game", b =>
                 {
                     b.Property<int>("GameId")
@@ -321,6 +288,31 @@ namespace SystemInfo.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Games");
+                });
+
+            modelBuilder.Entity("SystemInfo.Models.GameModels.Score", b =>
+                {
+                    b.Property<int>("ScoreId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ScoreId"));
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ScoreValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("bit");
+
+                    b.HasKey("ScoreId");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("Scores");
                 });
 
             modelBuilder.Entity("SystemInfo.Models.GameModels.User", b =>
@@ -423,17 +415,6 @@ namespace SystemInfo.Migrations
                     b.Navigation("ContactType");
                 });
 
-            modelBuilder.Entity("SystemInfo.Models.GameModels.Badge", b =>
-                {
-                    b.HasOne("SystemInfo.Models.GameModels.User", "User")
-                        .WithMany("Badges")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("SystemInfo.Models.GameModels.Game", b =>
                 {
                     b.HasOne("SystemInfo.Models.GameModels.User", "User")
@@ -443,6 +424,17 @@ namespace SystemInfo.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SystemInfo.Models.GameModels.Score", b =>
+                {
+                    b.HasOne("SystemInfo.Models.GameModels.Game", "Game")
+                        .WithMany("Scores")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
                 });
 
             modelBuilder.Entity("SystemInfo.Models.ContactType", b =>
@@ -472,10 +464,13 @@ namespace SystemInfo.Migrations
                     b.Navigation("Farms");
                 });
 
+            modelBuilder.Entity("SystemInfo.Models.GameModels.Game", b =>
+                {
+                    b.Navigation("Scores");
+                });
+
             modelBuilder.Entity("SystemInfo.Models.GameModels.User", b =>
                 {
-                    b.Navigation("Badges");
-
                     b.Navigation("Games");
                 });
 #pragma warning restore 612, 618

@@ -11,8 +11,8 @@ namespace SystemInfo.Services.GameServices
     {
         Task<List<Game>> GetAll();
         Task<Game> GetGame(int? id);
-        Task<Game> Create(int UserId, DateTime GameDate, string EnergyType);
-        Task<Game> Update(int id, int UserId, DateTime GameDate, string EnergyType);
+        Task<Game> Create(int UserId, DateTime GameDate, string EnergyType, string Score);
+        Task<Game> Update(int id, int UserId, DateTime GameDate, string EnergyType, string Score);
         Task<Game> DeleteGame(int id);
     }
     public class GameService : IGameService
@@ -24,9 +24,9 @@ namespace SystemInfo.Services.GameServices
             _gameRepository = gameRepository;
         }
 
-        public async Task<Game> Create(int UserId, DateTime GameDate, string EnergyType)
+        public async Task<Game> Create(int UserId, DateTime GameDate, string EnergyType, string Score)
         {
-            return await _gameRepository.Create(UserId, GameDate, EnergyType);
+            return await _gameRepository.Create(UserId, GameDate, EnergyType, Score);
         }
 
         public async Task<Game> DeleteGame(int id)
@@ -44,9 +44,9 @@ namespace SystemInfo.Services.GameServices
            return await _gameRepository.GetGame(id);
         }
 
-        public async Task<Game> Update(int id, int UserId, DateTime GameDate, string EnergyType)
+        public async Task<Game> Update(int id, int UserId, DateTime GameDate, string EnergyType, string Score)
         {
-            return await _gameRepository.Update(id, UserId, GameDate, EnergyType);
+            return await _gameRepository.Update(id, UserId, GameDate, EnergyType, Score);
         }
     }
 }

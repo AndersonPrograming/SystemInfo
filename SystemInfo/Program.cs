@@ -17,16 +17,14 @@ builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
 builder.Services.AddScoped<IContactTypeRepository, ContactTypeRepository>();
 builder.Services.AddScoped<IDeviceTypeRepository, DeviceTypeRepository>();
 builder.Services.AddScoped<IEnergyLogRepository, EnergyLogRepository>();
-builder.Services.AddScoped<IEnergyMeterRepository, EnergyMeterRepository>(); 
+builder.Services.AddScoped<IEnergyMeterRepository, EnergyMeterRepository>();
 builder.Services.AddScoped<IFarmRepository, FarmRepository>();
 builder.Services.AddScoped<IFarmerRepository, FarmerRepository>();
 builder.Services.AddScoped<IFarmTypeRepository, FarmTypeRepository>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
-builder.Services.AddScoped<IScoreRepository, ScoreRepository>();
-
-
+builder.Services.AddScoped<IBadgeRepository, BadgeRepository>();
 
 builder.Services.AddScoped<IDeviceService, DeviceService>();
 builder.Services.AddScoped<IContactTypeService, ContactTypeService>();
@@ -39,24 +37,22 @@ builder.Services.AddScoped<IFarmTypeService, FarmTypeService>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IGameService, GameService>();
-builder.Services.AddScoped<IScoreService, ScoreService>();
-
+builder.Services.AddScoped<IBadgeService, BadgeService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
+    options.AddDefaultPolicy(policy =>
     {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
-
-
 
 var app = builder.Build();
 
@@ -69,11 +65,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors(); // Ensure CORS is applied before authorization
+
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseCors();
-
 
 app.Run();

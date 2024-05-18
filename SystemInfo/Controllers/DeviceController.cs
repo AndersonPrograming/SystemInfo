@@ -35,9 +35,9 @@ namespace SystemInfo.Controllers
             return Ok(device);
         }
         [HttpPost]
-        public async Task<ActionResult<DeviceType>> create(string DeviceBrand, string GenerationCapacity, int FarmId, int EnergyMeterId, int DeviceTypeId)
+        public async Task<ActionResult<Device>> create([FromBody] DeviceModel model)
         {
-            var createDevice = await _deviceService.Create(DeviceBrand, GenerationCapacity, FarmId, EnergyMeterId, DeviceTypeId);
+            var createDevice = await _deviceService.Create(model.deviceBrand, model.generationCapacity, model.farmId, model.energyMeterId, model.deviceTypeId);
             if (createDevice == null)
             {
                 return BadRequest("Device not Created");
@@ -45,10 +45,10 @@ namespace SystemInfo.Controllers
             return Ok(createDevice);
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> Update(int id, string DeviceBrand, string GenerationCapacity, int FarmId, int EnergyMeterId, int DeviceTypeId)
+        [HttpPatch]
+        public async Task<IActionResult> Update([FromBody] DeviceModelU model)
         {
-            var createDevice = await _deviceService.Update(id, DeviceBrand, GenerationCapacity, FarmId, EnergyMeterId, DeviceTypeId);
+            var createDevice = await _deviceService.Update(model.id, model.deviceBrand, model.generationCapacity, model.farmId, model.energyMeterId, model.deviceTypeId);
             if (createDevice == null)
             {
                 return BadRequest("Device not Updated");
@@ -66,6 +66,24 @@ namespace SystemInfo.Controllers
             }
             return Ok(device);
 
+        }
+
+        public class DeviceModel
+        {
+            public string deviceBrand { get; set; }
+            public string generationCapacity { get; set; }
+            public int farmId { get; set; }
+            public int energyMeterId { get; set; }
+            public int deviceTypeId { get; set; }
+        }
+        public class DeviceModelU
+        {
+            public int id { get; set; }
+            public string deviceBrand { get; set; }
+            public string generationCapacity { get; set; }
+            public int farmId { get; set; }
+            public int energyMeterId { get; set; }
+            public int deviceTypeId { get; set; }
         }
     }
 }

@@ -35,9 +35,9 @@ namespace SystemInfo.Controllers
             return Ok(farmer);
         }
         [HttpPost]
-        public async Task<ActionResult<Farmer>> create(string name, string lastname, int contactType, string contact, string address)
+        public async Task<ActionResult<Farmer>> create([FromBody] FarmerModel model)
         {
-            var createFarmer = await _farmerService.Create(name, lastname, contactType, contact, address);
+            var createFarmer = await _farmerService.Create(model.name, model.lastname, model.contactTypeId, model.contact, model.address);
             if (createFarmer == null)
             {
                 return BadRequest("Farmer not Created");
@@ -45,10 +45,10 @@ namespace SystemInfo.Controllers
             return Ok(createFarmer);
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> Update(int id, string name, string lastname, int contactType, string contact, string address)
+        [HttpPatch()]
+        public async Task<IActionResult> Update([FromBody] FarmerModelU model)
         {
-            var createFarmer = await _farmerService.Update(id, name, lastname, contactType, contact, address);
+            var createFarmer = await _farmerService.Update(model.id, model.name, model.lastName, model.contactTypeId, model.contact, model.address);
             if (createFarmer == null)
             {
                 return BadRequest("Farmer not Updated");
@@ -66,6 +66,24 @@ namespace SystemInfo.Controllers
             }
             return Ok(farmer);
 
+        }
+
+        public class FarmerModel
+        {
+            public string name { get; set; }
+            public string lastname { get; set; }
+            public int contactTypeId { get; set; }
+            public string contact { get; set; }
+            public string address { get; set; }
+        }
+        public class FarmerModelU
+        {
+            public int id { get; set; }
+            public string name { get; set; }
+            public string lastName { get; set; }
+            public int contactTypeId { get; set; }
+            public string contact { get; set; }
+            public string address { get; set; }
         }
     }
 }

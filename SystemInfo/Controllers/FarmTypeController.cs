@@ -35,9 +35,9 @@ namespace SystemInfo.Controllers
             return Ok(farmType);
         }
         [HttpPost]
-        public async Task<ActionResult<FarmType>> create(string farmType)
+        public async Task<ActionResult<FarmType>> create([FromBody] FarmTypeModel model)
         {
-            var createFarmType = await _farmTypeService.Create(farmType);
+            var createFarmType = await _farmTypeService.Create(model.farmType);
             if(createFarmType == null)
             {
                 return BadRequest("FarmType not Created");
@@ -46,9 +46,9 @@ namespace SystemInfo.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> Update(int id, string farmType)
+        public async Task<IActionResult> Update([FromBody] FarmTypeModelU model)
         {
-           var farm = await _farmTypeService.Update(id, farmType);
+           var farm = await _farmTypeService.Update(model.id, model.farmType);
             if(farm == null)
             {
                 return BadRequest("FarmType not Updated");
@@ -66,6 +66,16 @@ namespace SystemInfo.Controllers
             }
             return Ok(farmType);
            
+        }
+
+        public class FarmTypeModel
+        {
+            public string farmType { get; set; }
+        }
+        public class FarmTypeModelU
+        {
+            public int id { get; set; }
+            public string farmType { get; set; }
         }
     }
 }

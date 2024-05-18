@@ -6,9 +6,9 @@
         public required int UserId { get; set; }
         public required  DateTime GameDate { get; set; }
         public required string EnergyType { get; set; }
+        public required string Score { get; set; }
         public bool isDeleted { get; set; } = false;
 
         public User? User { get; set; }
-        public List<Score>? Scores { get; set; }
     }
 }

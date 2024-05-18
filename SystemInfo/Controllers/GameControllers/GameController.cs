@@ -4,6 +4,7 @@ using SystemInfo.Models;
 using SystemInfo.Models.GameModels;
 using SystemInfo.Services;
 using SystemInfo.Services.GameServices;
+using static SystemInfo.Controllers.GameControllers.UserController;
 
 namespace SystemInfo.Controllers.GameControllers
 {
@@ -36,9 +37,9 @@ namespace SystemInfo.Controllers.GameControllers
             return Ok(game);
         }
         [HttpPost]
-        public async Task<ActionResult<Game>> create(int UserId, DateTime GameDate, string EnergyType)
+        public async Task<ActionResult<Game>> create([FromBody] GameModel model)
         {
-            var createGame = await _gameService.Create(UserId, GameDate, EnergyType);
+            var createGame = await _gameService.Create(model.UserId, model.GameDate, model.EnergyType, model.Score);
             if (createGame == null)
             {
                 return BadRequest("Game not Created");
@@ -47,9 +48,9 @@ namespace SystemInfo.Controllers.GameControllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> Update(int id, int UserId, DateTime GameDate, string EnergyType)
+        public async Task<IActionResult> Update([FromBody] GameModelUpdate model)
         {
-            var createGame = await _gameService.Update(id, UserId, GameDate, EnergyType);
+            var createGame = await _gameService.Update(model.GameId, model.UserId, model.GameDate, model.EnergyType, model.Score);
             if (createGame == null)
             {
                 return BadRequest("Game not Updated");
@@ -67,6 +68,22 @@ namespace SystemInfo.Controllers.GameControllers
             }
             return Ok(game);
 
+        }
+
+        public class GameModel
+        {
+            public int UserId { get; set; }
+            public DateTime GameDate { get; set; }
+            public string EnergyType { get; set; }
+            public string Score { get; set; }
+        }
+        public class GameModelUpdate
+        {
+            public int GameId { get; set; }
+            public int UserId { get; set; }
+            public DateTime GameDate { get; set; }
+            public string EnergyType { get; set; }
+            public string Score { get; set; }
         }
     }
 }

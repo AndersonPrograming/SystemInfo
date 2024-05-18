@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using SystemInfo.Models.GameModels;
 using SystemInfo.Repositories;
 using SystemInfo.Services.GameServices;
@@ -35,9 +36,9 @@ namespace SystemInfo.Controllers.GameControllers
             return Ok(user);
         }
         [HttpPost]
-        public async Task<ActionResult<User>> create(string Email, string Username, string Password, string image)
+        public async Task<ActionResult<User>> create([FromBody] CreatingModel model)
         {
-            var createUser = await _userService.Create(Email, Username, Password, image);
+            var createUser = await _userService.Create(model.Email, model.Username, model.Password, model.Image);
             if (createUser == null)
             {
                 return BadRequest("User not Created");
@@ -45,15 +46,29 @@ namespace SystemInfo.Controllers.GameControllers
             return Ok(createUser);
         }
 
+
         [HttpPost("Login")]
-        public async Task<ActionResult<UserAuth>> Login(string Username, string Password)
+        public async Task<ActionResult<UserAuth>> Login([FromBody] LoginModel model)
         {
-            var LoginUser = await _userService.Login(Username, Password);
+            var LoginUser = await _userService.Login(model.Username, model.Password);
             if (LoginUser == null)
             {
-                return BadRequest("User or password Incorret");
+                return BadRequest("user or password incorrect");
             }
             return Ok(LoginUser);
+        }
+
+        public class LoginModel
+        {
+            public string Username { get; set; }
+            public string Password { get; set; }
+        }
+        public class CreatingModel
+        {
+            public string Username { get; set; }
+            public string Password { get; set; }
+            public string Email { get; set; }
+            public string Image { get; set; }
         }
 
         [HttpPatch("{id}")]

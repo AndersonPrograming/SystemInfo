@@ -35,9 +35,9 @@ namespace SystemInfo.Controllers
             return Ok(energyMeter);
         }
         [HttpPost]
-        public async Task<ActionResult<EnergyMeter>> create(string energyMeterBrand, DateTime instalationDate)
+        public async Task<ActionResult<EnergyMeter>> create([FromBody] EnergyMeterModel model)
         {
-            var createEnergyMeter = await _energyMeterService.Create(energyMeterBrand, instalationDate);
+            var createEnergyMeter = await _energyMeterService.Create(model.energyMeterBrand, model.instalationDate);
             if (createEnergyMeter == null)
             {
                 return BadRequest("FarmType not Created");
@@ -45,15 +45,15 @@ namespace SystemInfo.Controllers
             return Ok(createEnergyMeter);
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> Update(int id, string energyMeter, DateTime instalationDate)
+        [HttpPatch]
+        public async Task<IActionResult> Update([FromBody] EnergyMeterModelU model)
         {
-            var createEnergyMeter = await _energyMeterService.Update(id, energyMeter, instalationDate);
+            var createEnergyMeter = await _energyMeterService.Update(model.id, model.energyMeterBrand, model.instalationDate);
             if (createEnergyMeter == null)
             {
                 return BadRequest("EnergyMeter not Updated");
             }
-            return Ok(energyMeter);
+            return Ok(createEnergyMeter);
         }
 
         [HttpDelete("{id}")]
@@ -66,6 +66,19 @@ namespace SystemInfo.Controllers
             }
             return Ok(energyMeter);
 
+        }
+
+        public class EnergyMeterModel
+        {
+            public string energyMeterBrand { get; set; } 
+            public DateTime instalationDate { get; set; }
+        }
+
+        public class EnergyMeterModelU
+        {
+            public int id { get; set; }
+            public string energyMeterBrand { get; set; }
+            public DateTime instalationDate { get; set; }
         }
     }
 }

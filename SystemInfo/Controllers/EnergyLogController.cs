@@ -35,9 +35,9 @@ namespace SystemInfo.Controllers
             return Ok(energyLog);
         }
         [HttpPost]
-        public async Task<ActionResult<EnergyLog>> create(DateTime ReadingDate, string GeneratedEnergyKWH, string ConsumedEnergyKWH, int EnergyMeterId)
+        public async Task<ActionResult<EnergyLog>> create([FromBody] EnergyLogModel model)
         {
-            var createEnergyLog = await _energyLogService.Create(ReadingDate, GeneratedEnergyKWH, ConsumedEnergyKWH, EnergyMeterId);
+            var createEnergyLog = await _energyLogService.Create(model.readingDate, model.generatedEnergyKWH, model.consumedEnergyKWH, model.energyMeterId);
             if (createEnergyLog == null)
             {
                 return BadRequest("EnergyLog not Created");
@@ -45,10 +45,10 @@ namespace SystemInfo.Controllers
             return Ok(createEnergyLog);
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> Update(int id, DateTime ReadingDate, string GeneratedEnergyKWH, string ConsumedEnergyKWH, int EnergyMeterId)
+        [HttpPatch]
+        public async Task<IActionResult> Update([FromBody] EnergyLogModelU model)
         {
-            var createEnergyLog = await _energyLogService.Update(id, ReadingDate, GeneratedEnergyKWH, ConsumedEnergyKWH, EnergyMeterId);
+            var createEnergyLog = await _energyLogService.Update(model.id, model.readingDate, model.generatedEnergyKWH, model.consumedEnergyKWH, model.energyMeterId);
             if (createEnergyLog == null)
             {
                 return BadRequest("EnergyLog not Updated");
@@ -66,6 +66,22 @@ namespace SystemInfo.Controllers
             }
             return Ok(energyLog);
 
+        }
+
+        public class EnergyLogModel
+        {
+            public DateTime readingDate { get; set; }
+            public string generatedEnergyKWH { get; set; }
+            public string consumedEnergyKWH { get; set; }
+            public int energyMeterId { get; set; }
+        }
+        public class EnergyLogModelU
+        {
+            public int id { get; set; }
+            public DateTime readingDate { get; set; }
+            public string generatedEnergyKWH { get; set; }
+            public string consumedEnergyKWH { get; set; }
+            public int energyMeterId { get; set; }
         }
     }
 }

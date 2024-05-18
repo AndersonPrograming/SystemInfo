@@ -35,9 +35,9 @@ namespace SystemInfo.Controllers
             return Ok(farm);
         }
         [HttpPost]
-        public async Task<ActionResult<Farm>> create(string farmName, string location, string farmArea, string image, int farmerId, int farmTypeId)
+        public async Task<ActionResult<Farm>> create([FromBody] FarmModel model)
         {
-            var createFarm = await _farmService.Create( farmName, location, farmArea, image, farmerId, farmTypeId);
+            var createFarm = await _farmService.Create( model.farmName, model.location, model.farmArea, model.image, model.farmerId, model.farmTypeId);
             if (createFarm == null)
             {
                 return BadRequest("Farm not Created");
@@ -45,10 +45,10 @@ namespace SystemInfo.Controllers
             return Ok(createFarm);
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> Update(int id, string farmName, string location, string farmArea, string image, int farmerId, int farmTypeId)
+        [HttpPatch()]
+        public async Task<IActionResult> Update([FromBody] FarmModelU model)
         {
-            var createFarm = await _farmService.Update(id, farmName, location, farmArea, image, farmerId, farmTypeId);
+            var createFarm = await _farmService.Update(model.id, model.farmName, model.location, model.farmArea, model.image, model.farmerId, model.farmTypeId);
             if (createFarm == null)
             {
                 return BadRequest("Farm not Updated");
@@ -66,6 +66,26 @@ namespace SystemInfo.Controllers
             }
             return Ok(farm);
 
+        }
+
+        public class FarmModel
+        {
+            public string farmName { get; set; }
+            public string location { get; set; }
+            public string farmArea { get; set; }
+            public string image { get; set; }   
+            public int farmerId { get; set; }
+            public int farmTypeId { get; set; }
+        }
+        public class FarmModelU
+        {
+            public int id { get; set; }
+            public string farmName { get; set; }
+            public string location { get; set; }
+            public string farmArea { get; set; }
+            public string image { get; set; }
+            public int farmerId { get; set; }
+            public int farmTypeId { get; set; }
         }
     }
 }

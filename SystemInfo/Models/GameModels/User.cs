@@ -10,5 +10,6 @@
         public bool isDeleted { get; set; } = false;
 
         public List<Game>? Games { get; set; }
+        public List<Badge>? Badges { get; set; }
     }
 }

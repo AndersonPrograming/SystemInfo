@@ -10,8 +10,8 @@ namespace SystemInfo.Repositories.GameRepositories
     {
         Task<List<Game>> GetAll();
         Task<Game> GetGame(int? id);
-        Task<Game> Create(int UserId, DateTime GameDate, string EnergyType);
-        Task<Game> Update(int id, int UserId, DateTime GameDate, string EnergyType);
+        Task<Game> Create(int UserId, DateTime GameDate, string EnergyType, string Score);
+        Task<Game> Update(int id, int UserId, DateTime GameDate, string EnergyType, string Score);
         Task<Game> DeleteGame(int id);
     }
     public class GameRepository : IGameRepository
@@ -24,13 +24,14 @@ namespace SystemInfo.Repositories.GameRepositories
         {
             _db = db;
         }
-        public async Task<Game> Create(int UserId, DateTime GameDate, string EnergyType)
+        public async Task<Game> Create(int UserId, DateTime GameDate, string EnergyType, string Score)
         {
             Game resultGame = new Game
             {
                 UserId = UserId,
                 GameDate = GameDate,
-                EnergyType = EnergyType
+                EnergyType = EnergyType,
+                Score = Score
             };
             await _db.Games.AddAsync(resultGame);
             _db.SaveChanges();
@@ -57,7 +58,7 @@ namespace SystemInfo.Repositories.GameRepositories
             return await _db.Games.FirstOrDefaultAsync(u => u.GameId == id);
         }
 
-        public async Task<Game> Update(int id, int UserId, DateTime GameDate, string EnergyType)
+        public async Task<Game> Update(int id, int UserId, DateTime GameDate, string EnergyType, string Score)
         {
             Game resultGame = await GetGame(id);
             if(resultGame != null)
